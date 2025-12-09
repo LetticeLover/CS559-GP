@@ -4,14 +4,43 @@ import * as Towers from "./towers.js";
 import * as Enemies from "./enemies.js";
 import * as Projectiles from "./projectiles.js";
 
+const loader = new THREE.TextureLoader();
+loader.load(
+  './textures/grass.jpg',
+  function (texture) {
+    Game.groundMats.fancy.map = texture;
+    Game.groundMats.fancy.needsUpdate = true;
+  },
+  undefined,
+  function (error) {
+    console.error('An error occured while loading grass texture');
+    console.error(error);
+  }
+);
+loader.load(
+  './textures/earth.jpg',
+  function (texture) {
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(2, 1);
+    Game.pathMats.fancy.map = texture;
+    Game.pathMats.fancy.needsUpdate = true;
+  },
+  undefined,
+  function (error) {
+    console.error('An error occured while loading path texture');
+    console.error(error);
+  }
+);
+
 export class Game {
   static groundMats = {
     prototype: new THREE.MeshStandardMaterial({ color: 0x2d5016, side: THREE.DoubleSide }), 
-    fancy: new THREE.MeshStandardMaterial({ color: 0x228b22, side: THREE.DoubleSide, roughness: 0.8 }),
+    fancy: new THREE.MeshStandardMaterial({ color: 'white', side: THREE.DoubleSide }),
   }
   static pathMats = {
     prototype: new THREE.MeshStandardMaterial({ color: 0x4a4a4a }),
-    fancy: new THREE.MeshStandardMaterial({ color: 0x8b4513 }),
+    fancy: new THREE.MeshStandardMaterial({ color: 'white' }),
   }
 
   constructor(renderer, lives = 20, startingCurrency = 150, difficulty = 'normal') {
@@ -22,6 +51,7 @@ export class Game {
       score: 0,
       difficulty: difficulty,
       paused: false,
+      continuePaused: false,
       gameOver: false,
     }
     this.renderer = renderer;
@@ -68,7 +98,6 @@ export class Game {
     this.camera.position.set(0, 30, 0);
     this.camera.lookAt(0, 0, 0);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.enablePan = false;
     this.controls.mouseButtons = {
       LEFT: THREE.MOUSE.PAN,
       MIDDLE: THREE.MOUSE.DOLLY,
@@ -160,7 +189,7 @@ export class Game {
     this.enemySpawnTimer = 0;
     this.enemiesSpawned = 0;
     this.enemiesPerWave = 10;
-    this.selectedTowerType = Towers.Types.BASIC;
+    this.selectedTowerType = Towers.Types.NONE;
   }
 
   onMouseClick(mousePos) {
@@ -226,6 +255,8 @@ export class Game {
               }
             }
             break;
+          case Towers.Types.NONE:
+            break;
         }
       }
     }
@@ -265,6 +296,11 @@ export class Game {
           case Towers.Types.RANGER:
             range = Towers.Ranger.Stats.range;
             break;
+          case Towers.Types.BASIC:
+            range = Towers.Farm.Stats.range;
+            break;
+          case Towers.Types.NONE:
+            return;
         }
         const geometry = new THREE.CircleGeometry(range);
         const material = new THREE.MeshStandardMaterial({ color: 0xadd836, transparent: true, opacity: 0.4 });
@@ -272,7 +308,7 @@ export class Game {
         mesh.position.copy(point);
         mesh.position.y += 0.25;
         mesh.rotation.x = -Math.PI/2;
-        mesh.name = 'range circle'
+        mesh.name = 'range circle';
         this.scene.add(mesh);
       }
     }
@@ -296,66 +332,71 @@ export class Game {
       return;
     }
 
-    this.enemySpawnTimer += delta;
-    if (this.enemiesSpawned < this.enemiesPerWave && this.enemySpawnTimer > 1/(Math.log(0.15 * this.state.wave + 1))) {
-      this.spawnEnemy();
-    }
+    if (!this.state.continuePaused) {
+      this.enemySpawnTimer += delta;
+      if (this.enemiesSpawned < this.enemiesPerWave && this.enemySpawnTimer > 1/(Math.log(0.15 * this.state.wave + 1))) {
+        this.spawnEnemy();
+      }
 
-    for (let i = this.enemies.length - 1; i >= 0; i--) {
-      const enemy = this.enemies[i];
+      for (let i = this.enemies.length - 1; i >= 0; i--) {
+        const enemy = this.enemies[i];
 
-      if (enemy.waypointIndex < this.waypoints.length) {
-        enemy.step(delta);
-      } else {
-        this.scene.remove(enemy.protoMesh);
-        this.scene.remove(enemy.fancyMesh);
-        this.enemies.splice(i, 1);
-        this.state.lives -= enemy.damage;
-        if (this.state.lives <= 0) {
-          this.state.gameOver = true;
-          return;
+        if (enemy.waypointIndex < this.waypoints.length) {
+          enemy.step(delta);
+        } else {
+          this.scene.remove(enemy.protoMesh);
+          this.scene.remove(enemy.fancyMesh);
+          this.enemies.splice(i, 1);
+          this.state.lives -= enemy.damage;
+          if (this.state.lives <= 0) {
+            this.state.gameOver = true;
+            return;
+          }
+        }
+
+        if (enemy.material) {
+          const healthPercent = enemy.health / enemy.maxHealth;
+          enemy.material.color.setHSL(healthPercent * 0.3, 1.0, 0.5);
         }
       }
 
-      if (enemy.material) {
-        const healthPercent = enemy.health / enemy.maxHealth;
-        enemy.material.color.setHSL(healthPercent * 0.3, 1.0, 0.5);
-      }
-    }
-
-    this.towers.forEach(tower => {
-      tower.step(delta, this.enemies);
-      const projectiles = tower.projectiles;
-      for (let i = projectiles.length - 1; i >= 0; i--) {
-        const proj = projectiles[i];
-        if (proj.target && this.enemies.includes(proj.target)) {
-          proj.step(delta);
-          if (proj.position.distanceTo(proj.target.position) < 0.5) {
-            console.log("proj hit!");
-            proj.target.health -= proj.damage;
-            if (proj.target.health <= 0) {
-              const enemyIndex = this.enemies.findIndex(e => e === proj.target);
-              proj.target.addScore();
-              this.enemies.splice(enemyIndex, 1);
-              this.scene.remove(proj.target.protoMesh);
-              this.scene.remove(proj.target.fancyMesh);
+      this.towers.forEach(tower => {
+        tower.step(delta, this.enemies);
+        const projectiles = tower.projectiles;
+        for (let i = projectiles.length - 1; i >= 0; i--) {
+          const proj = projectiles[i];
+          if (proj.target && this.enemies.includes(proj.target)) {
+            proj.step(delta);
+            if (proj.position.distanceTo(proj.target.position) < 0.5) {
+              console.log("proj hit!");
+              proj.target.health -= proj.damage;
+              if (proj.target.health <= 0) {
+                const enemyIndex = this.enemies.findIndex(e => e === proj.target);
+                proj.target.addScore();
+                this.enemies.splice(enemyIndex, 1);
+                this.scene.remove(proj.target.protoMesh);
+                this.scene.remove(proj.target.fancyMesh);
+              }
+              this.scene.remove(proj.mesh);
+              tower.projectiles.splice(i, 1);
             }
+          } else {
             this.scene.remove(proj.mesh);
             tower.projectiles.splice(i, 1);
           }
-        } else {
-          this.scene.remove(proj.mesh);
-          tower.projectiles.splice(i, 1);
         }
-      }
-    });
+      });
 
-    if (this.enemiesSpawned >= this.enemiesPerWave && this.enemies.length == 0 && !this.state.gameOver) {
-      this.enemiesSpawned = 0;
-      this.enemiesPerWave += 3;
-      this.state.wave++;
-      this.score += 100;
-      this.state.currency += 50;
+      if (this.enemiesSpawned >= this.enemiesPerWave && this.enemies.length == 0 && !this.state.gameOver) {
+        this.enemiesSpawned = 0;
+        this.enemiesPerWave += 3;
+        this.state.wave++;
+        this.score += 100;
+        this.state.currency += 50;
+        this.state.continuePaused = true;
+        document.getElementById('pause-button').disabled = true;
+        document.getElementById('continue-screen').style.display = 'block';
+      }
     }
   }
 }

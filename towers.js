@@ -7,6 +7,7 @@ export const Types = {
   BASIC: 'basic',
   RANGER: 'ranger',
   FARM: 'farm',
+  NONE: 'none',
 }
 
 const loader = new GLTFLoader();

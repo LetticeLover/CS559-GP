@@ -21,6 +21,7 @@ const uiOverlay = document.getElementById('ui-overlay');
 const controls = document.getElementById('controls');
 const towerSelection = document.getElementById('tower-selection');
 const gameOverScreen = document.getElementById('game-over-screen');
+const continueScreen = document.getElementById('continue-screen');
 
 const modeButton = document.getElementById('mode-button');
 const startButton = document.getElementById('start-button');
@@ -28,17 +29,22 @@ const pauseButton = document.getElementById('pause-button');
 const menuButton = document.getElementById('menu-button');
 const gameOverMenuButton = document.getElementById('game-over-menu-button');
 const restartButton = document.getElementById('restart-button');
+const continueButton = document.getElementById('continue-button');
 
 const basicTowerButton = document.getElementById('basic-tower-button');
-basicTowerButton.classList.add('highlighted');
 const rangerTowerButton = document.getElementById('ranger-tower-button');
 const farmTowerButton = document.getElementById('farm-tower-button');
 const towerButtons = [basicTowerButton, rangerTowerButton, farmTowerButton];
-let lastClickedButton = basicTowerButton;
+let lastClickedButton;
 towerButtons.forEach(button => {
   button.addEventListener('click', () => {
     if (lastClickedButton) {
       lastClickedButton.classList.remove('highlighted');
+    }
+    if (button === lastClickedButton) {
+      game.selectedTowerType = Towers.Types.NONE;
+      lastClickedButton = null;
+      return;
     }
     button.classList.add('highlighted');
     lastClickedButton = button;
@@ -142,6 +148,12 @@ gameOverMenuButton.addEventListener('click', () => { goToMenu(); });
 restartButton.addEventListener('click', () => {
   game = null;
   startGame();
+});
+
+continueButton.addEventListener('click', () => {
+  game.state.continuePaused = false;
+  pauseButton.disabled = false;
+  continueScreen.style.display = 'none';
 });
 
 
