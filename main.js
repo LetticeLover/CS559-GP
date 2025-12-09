@@ -70,9 +70,7 @@ renderer.domElement.addEventListener('click', onMouseClick);
 function startGame() {
   const startingLives = parseInt(document.getElementById('starting-lives').value);
   const startingCurrency = parseInt(document.getElementById('starting-currency').value);
-  difficulty = document.getElementById('difficulty').value;
-  console.log(difficulty);
-  console.log(difficulty.value);
+  const difficulty = document.getElementById('difficulty').value;
 
   menuScreen.style.display = 'none';
   gameOverScreen.style.display = 'none';
