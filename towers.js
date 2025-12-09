@@ -1,10 +1,12 @@
 import * as THREE from "three";
 import { Projectile } from "./projectiles.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 export const Types = {
-    BASIC: 'basic',
-    RANGER: 'ranger',
-  }
+  BASIC: 'basic',
+  RANGER: 'ranger',
+  FARM: 'farm',
+}
 
 
 class Tower {
@@ -60,6 +62,7 @@ export class Basic extends Tower {
   }
   constructor(position, game) {
     super(position, game);
+    this.position.y += 0.5;
     this.type = Types.BASIC;
     this.damage = Basic.Stats.damage;
     this.range = Basic.Stats.range;
@@ -108,6 +111,7 @@ export class Ranger extends Tower {
   }
   constructor(position, game) {
     super(position, game);
+    this.position.y += 0.5;
     this.type = Types.RANGER;
     this.damage = Ranger.Stats.damage;
     this.range = Ranger.Stats.range;
@@ -139,5 +143,56 @@ export class Ranger extends Tower {
     this.fancyTower.position.copy(this.position);
     this.fancyTower.add(fancyBase);
     this.fancyTower.add(fancyBarrel);
+  }
+}
+
+export class Farm {
+  static Stats = {
+    cost: 100,
+    shootInterval: 17.5,
+    range: 1
+  }
+  constructor(position, game) {
+    this.position = position.clone();
+    this.position.y += 0.5;
+    this.game = game;
+    this.type = Types.FARM;
+    this.range = Farm.Stats.range;
+    this.shootInterval = Farm.Stats.shootInterval;
+    this.shootTimer = 0;
+    this.projectiles = [];
+    this.createMeshes()
+  }
+  createMeshes() {
+    const geometry = new THREE.BoxGeometry(1.5, 1, 1.5);
+    const material = new THREE.MeshStandardMaterial({ color: 0x964b00 });
+    this.protoTower = new THREE.Mesh(geometry, material);
+    this.protoTower.position.copy(this.position);
+    this.fancyTower = this.protoTower;
+    this.game.scene.add(this.protoTower);
+    const loader = new GLTFLoader();
+    loader.load(
+      "./models/barn/scene.gltf",
+      (gltf) => {
+        this.fancyTower = gltf.scene;
+        this.fancyTower.scale.set(0.005, 0.005, 0.005);
+        this.fancyTower.position.copy(this.position);
+        if (this.game.renderMode === 'fancy') {
+          this.game.scene.remove(this.protoTower);
+          this.game.scene.add(this.fancyTower);
+        }
+      },
+      (xhr) => {
+      },
+      (error) => {
+      }
+    );
+  }
+  step(delta, enemies) {
+    this.shootTimer += delta;
+    if (this.shootTimer > this.shootInterval) {
+      this.game.state.currency += 25;
+      this.shootTimer = 0;
+    }
   }
 }

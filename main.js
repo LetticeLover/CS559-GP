@@ -32,7 +32,8 @@ const restartButton = document.getElementById('restart-button');
 const basicTowerButton = document.getElementById('basic-tower-button');
 basicTowerButton.classList.add('highlighted');
 const rangerTowerButton = document.getElementById('ranger-tower-button');
-const towerButtons = [basicTowerButton, rangerTowerButton];
+const farmTowerButton = document.getElementById('farm-tower-button');
+const towerButtons = [basicTowerButton, rangerTowerButton, farmTowerButton];
 let lastClickedButton = basicTowerButton;
 towerButtons.forEach(button => {
   button.addEventListener('click', () => {
@@ -48,6 +49,9 @@ towerButtons.forEach(button => {
         break;
       case Towers.Types.RANGER:
         game.selectedTowerType = Towers.Types.RANGER;
+        break;
+      case Towers.Types.FARM:
+        game.selectedTowerType = Towers.Types.FARM;
         break;
     }
   });
@@ -114,6 +118,7 @@ function gameOver() {
 function initUI() {
   basicTowerButton.textContent = `Basic Tower (${Towers.Basic.Stats.cost})`;
   rangerTowerButton.textContent = `Ranger Tower (${Towers.Ranger.Stats.cost})`;
+  farmTowerButton.textContent = `Farm Tower (${Towers.Farm.Stats.cost})`;
   updateUI();
 }
 

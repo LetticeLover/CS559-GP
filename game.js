@@ -14,17 +14,6 @@ export class Game {
     fancy: new THREE.MeshStandardMaterial({ color: 0x8b4513 }),
   }
 
-  waypoints = [
-    new THREE.Vector3(-18, 0.5, -10),
-    new THREE.Vector3(-10, 0.5, -10),
-    new THREE.Vector3(-10, 0.5, 0),
-    new THREE.Vector3(0, 0.5, 0),
-    new THREE.Vector3(0, 0.5, 10),
-    new THREE.Vector3(10, 0.5, 10),
-    new THREE.Vector3(10, 0.5, 0),
-    new THREE.Vector3(18, 0.5, 0)
-  ];
-
   constructor(renderer, lives = 20, startingCurrency = 150, difficulty = 'normal') {
     this.state = {
       lives: lives,
@@ -39,14 +28,44 @@ export class Game {
     this.raycaster = new THREE.Raycaster();
     this.clock = new THREE.Clock();
     this.renderMode = 'prototype';
+    this.generateWaypoints();
     this.initScene();
     this.initGame();
+  }
+
+  generateWaypoints() {
+    let waypoints = [];
+    let prevPoint = new THREE.Vector3(-18, 0.5, (Math.random() * 40) - 20) 
+    waypoints.push(prevPoint);
+    let done = false;
+
+    while (!done) {
+      const nextPoint = new THREE.Vector3(
+        prevPoint.x + Math.floor((Math.random() * 10)),
+        0.5,
+        prevPoint.z + Math.floor((Math.random() * 20) - 10)
+      );
+      if (nextPoint.z >= 18) {
+        nextPoint.z = 18;
+      }
+      if (nextPoint.z <= -18) {
+        nextPoint.z = -18;
+      }
+      if (nextPoint.x >= 18) {
+        nextPoint.x = 18;
+        done = true;
+      }
+      waypoints.push(nextPoint);
+      prevPoint = nextPoint;
+    }
+
+    this.waypoints = waypoints;
   }
 
   initScene() {
     this.scene = new THREE.Scene();
     this.camera = new THREE.OrthographicCamera(-25, 25, 25, -25, 0.1, 1000);
-    this.camera.position.set(0, 20, 0);
+    this.camera.position.set(0, 30, 0);
     this.camera.lookAt(0, 0, 0);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enablePan = false;
@@ -83,7 +102,7 @@ export class Game {
 
       // place segment halfway between start and end
       pathSegment.position.copy(start).lerp(end, 0.5);
-      const angle = Math.atan2(end.z - start.z, end.x - start.x);
+      const angle = Math.atan2(end.z - start.z, -(end.x - start.x));
       pathSegment.rotation.y = angle;
       this.scene.add(pathSegment);
       this.pathSegments.push(pathSegment);
@@ -178,6 +197,19 @@ export class Game {
             if (this.state.currency >= cost) {
               this.state.currency -= cost;
               const newTower = new Towers.Ranger(new THREE.Vector3(point.x, 0.0, point.z), this);
+              this.towers.push(newTower);
+              if (this.renderMode === 'prototype') {
+                this.scene.add(newTower.protoTower);
+              } else {
+                this.scene.add(newTower.fancyTower);
+              }
+            }
+            break;
+          case Towers.Types.FARM:
+            cost = Towers.Farm.Stats.cost;
+            if (this.state.currency >= cost) {
+              this.state.currency -= cost;
+              const newTower = new Towers.Farm(new THREE.Vector3(point.x, 0.0, point.z), this);
               this.towers.push(newTower);
               if (this.renderMode === 'prototype') {
                 this.scene.add(newTower.protoTower);

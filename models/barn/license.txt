@@ -1,0 +1,11 @@
+Model Information:
+* title:	Barn low poly
+* source:	https://sketchfab.com/3d-models/barn-low-poly-89a2007df6ab43a690ce4f407ba1d4a3
+* author:	RacKrab (https://sketchfab.com/RacKrab)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Barn low poly" (https://sketchfab.com/3d-models/barn-low-poly-89a2007df6ab43a690ce4f407ba1d4a3) by RacKrab (https://sketchfab.com/RacKrab) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

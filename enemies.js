@@ -51,7 +51,6 @@ export class Goblin extends Enemy {
       this.speed /= 3;
       this.score /= 5;
     }
-    console.log(game.state.difficulty);
     if (game.state.difficulty === 'hard') {
       this.maxHealth *= 2;
       this.speed *= 1.5;
