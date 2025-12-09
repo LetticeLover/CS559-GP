@@ -313,7 +313,7 @@ export class Game {
         const proj = projectiles[i];
         if (proj.target && this.enemies.includes(proj.target)) {
           proj.step(delta);
-          if (proj.position.distanceTo(proj.target.position) < 0.1) {
+          if (proj.position.distanceTo(proj.target.position) < 0.5) {
             console.log("proj hit!");
             proj.target.health -= proj.damage;
             if (proj.target.health <= 0) {

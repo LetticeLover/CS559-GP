@@ -1,5 +1,47 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import * as SkeletonUtils from "three/addons/utils/SkeletonUtils.js";
+
+
+function drawHealthBar(canvas, context, texture, healthPercent) {
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = 'black';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = `hsl(${healthPercent * 0.3 * 360}, 100%, 50%)`; 
+  context.fillRect(1, 1, (canvas.width - 2) * healthPercent, canvas.height - 2);
+  texture.needsUpdate = true;
+}
+
+const loader = new GLTFLoader();
+let goblinModel;
+let ogreModel;
+loader.load(
+  './models/goblin/scene.gltf',
+  function (gltf) {
+    goblinModel = gltf.scene;
+    goblinModel.scale.set(25, 25, 25);
+  },
+  undefined,
+  function (error) {
+    console.error('Error occured while loading goblin model');
+    console.error(error);
+  }
+);
+loader.load(
+  './models/ogre/scene.gltf',
+  function (gltf) {
+    ogreModel = new THREE.Group();
+    const model = gltf.scene;
+    model.rotation.y = -Math.PI/2;
+    ogreModel.add(model);
+    ogreModel.scale.set(0.25, 0.25, 0.25);
+  },
+  undefined,
+  function (error) {
+    console.error('Error occured while loading ogre model');
+    console.error(error);
+  }
+);
 
 class Enemy {
   constructor(waypoints, game) {
@@ -27,6 +69,7 @@ class Enemy {
         return;
       }
     }
+    drawHealthBar(this.canvas, this.context, this.healthBarTexture, this.health / this.maxHealth);
   }
   addScore() {
     this.game.state.score += this.score;
@@ -67,26 +110,23 @@ export class Goblin extends Enemy {
     this.position.y = 1.5;
     this.protoMesh = new THREE.Mesh(protoGeometry, this.material);
     this.protoMesh.position.copy(this.position);
-    this.fancyMesh = this.protoMesh;
-    this.game.scene.add(this.protoMesh);
-    const loader = new GLTFLoader();
-    loader.load(
-      "./models/goblin/scene.gltf",
-      (gltf) => {
-        this.fancyMesh = gltf.scene;
-        this.fancyMesh.scale.set(25, 25, 25);
-        this.fancyMesh.position.copy(this.position);
-        if (this.game.renderMode === 'fancy') {
-          this.game.scene.remove(this.protoMesh);
-          this.game.scene.add(this.fancyMesh);
-        }
-      },
-      function(xhr) {
-      },
-      function(error) {
-        console.log(error);
-      }
-    );
+    this.fancyMesh = SkeletonUtils.clone(goblinModel);
+    this.fancyMesh.position.copy(this.position);
+    if (this.game.renderMode === 'fancy') {
+      this.game.scene.add(this.fancyMesh);
+    } else {
+      this.game.scene.add(this.protoMesh);
+    }
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = 256;
+    this.canvas.height = 32;
+    this.context = this.canvas.getContext('2d');
+    this.healthBarTexture = new THREE.CanvasTexture(this.canvas);
+    const healthBarMaterial = new THREE.SpriteMaterial({ map: this.healthBarTexture });
+    this.healthBarSprite = new THREE.Sprite(healthBarMaterial);
+    this.healthBarSprite.position.set(0, 0.125, 0);
+    this.healthBarSprite.scale.set(1/20, 1/35, 1/20);
+    this.fancyMesh.add(this.healthBarSprite);
   }
 }
 
@@ -124,28 +164,22 @@ export class Ogre extends Enemy {
     this.position.y = 2;
     this.protoMesh = new THREE.Mesh(geometry, this.material);
     this.protoMesh.position.copy(this.position);
-    this.fancyMesh = this.protoMesh;
-    this.game.scene.add(this.protoMesh);
-    const loader = new GLTFLoader();
-    loader.load(
-      "./models/ogre/scene.gltf",
-      (gltf) => {
-        this.fancyMesh = new THREE.Group();
-        const mesh = gltf.scene;
-        mesh.scale.set(0.25, 0.25, 0.25);
-        mesh.rotation.y = -Math.PI/2;
-        this.fancyMesh.position.copy(this.position);
-        this.fancyMesh.add(mesh);
-        if (this.game.renderMode === 'fancy') {
-          this.game.scene.remove(this.protoMesh);
-          this.game.scene.add(this.fancyMesh);
-        }
-      },
-      function(xhr) {
-      },
-      function(error) {
-        console.log(error);
-      }
-    );
+    this.fancyMesh = SkeletonUtils.clone(ogreModel);
+    this.fancyMesh.position.copy(this.position);
+    if (this.game.renderMode === 'fancy') {
+      this.game.scene.add(this.fancyMesh);
+    } else {
+      this.game.scene.add(this.protoMesh);
+    }
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = 256;
+    this.canvas.height = 32;
+    this.context = this.canvas.getContext('2d');
+    this.healthBarTexture = new THREE.CanvasTexture(this.canvas);
+    const healthBarMaterial = new THREE.SpriteMaterial({ map: this.healthBarTexture });
+    this.healthBarSprite = new THREE.Sprite(healthBarMaterial);
+    this.healthBarSprite.position.set(0, 20, 0);
+    this.healthBarSprite.scale.set(10, 4, 10);
+    this.fancyMesh.add(this.healthBarSprite);
   }
 }

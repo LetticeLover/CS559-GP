@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { Projectile } from "./projectiles.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import * as SkeletonUtils from "three/addons/utils/SkeletonUtils.js";
 
 export const Types = {
   BASIC: 'basic',
@@ -8,6 +9,20 @@ export const Types = {
   FARM: 'farm',
 }
 
+const loader = new GLTFLoader();
+let barnModel;
+loader.load(
+  './models/barn/scene.gltf',
+  function (gltf) {
+    barnModel = gltf.scene;
+    barnModel.scale.set(0.005, 0.005, 0.005);
+  },
+  undefined,
+  function (error) {
+    console.error('Error occured while loading barn model');
+    console.error(error);
+  }
+);
 
 class Tower {
     constructor(position, game) {
@@ -56,8 +71,8 @@ export class Basic extends Tower {
   static Stats = {
     cost: 50,
     shootInterval: 0.2,
-    damage: 15,
-    range: 5,
+    damage: 10,
+    range: 4,
     projectileSpeed: 20,
   }
   constructor(position, game) {
@@ -106,7 +121,7 @@ export class Ranger extends Tower {
     cost: 75,
     shootInterval: 1,
     damage: 25,
-    range: 12,
+    range: 10,
     projectileSpeed: 25,
   }
   constructor(position, game) {
@@ -168,25 +183,13 @@ export class Farm {
     const material = new THREE.MeshStandardMaterial({ color: 0x964b00 });
     this.protoTower = new THREE.Mesh(geometry, material);
     this.protoTower.position.copy(this.position);
-    this.fancyTower = this.protoTower;
-    this.game.scene.add(this.protoTower);
-    const loader = new GLTFLoader();
-    loader.load(
-      "./models/barn/scene.gltf",
-      (gltf) => {
-        this.fancyTower = gltf.scene;
-        this.fancyTower.scale.set(0.005, 0.005, 0.005);
-        this.fancyTower.position.copy(this.position);
-        if (this.game.renderMode === 'fancy') {
-          this.game.scene.remove(this.protoTower);
-          this.game.scene.add(this.fancyTower);
-        }
-      },
-      (xhr) => {
-      },
-      (error) => {
-      }
-    );
+    this.fancyTower = SkeletonUtils.clone(barnModel);
+    this.fancyTower.position.copy(this.position);
+    if (this.game.renderMode === 'fancy') {
+      this.game.scene.add(this.fancyTower);
+    } else {
+      this.game.scene.add(this.protoTower);
+    }
   }
   step(delta, enemies) {
     this.shootTimer += delta;
