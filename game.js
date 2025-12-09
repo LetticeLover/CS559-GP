@@ -65,25 +65,86 @@ export class Game {
 
   generateWaypoints() {
     let waypoints = [];
-    let prevPoint = new THREE.Vector3(-18, 0.1, (Math.random() * 40) - 20) 
-    waypoints.push(prevPoint);
+    const firstPoint = new THREE.Vector3(-18, 0.1, -18); 
+    const secondPoint = new THREE.Vector3(-15, 0.1, 15);
+    const thirdPoint = new THREE.Vector3(15, 0.1, -15);
+    const lastPoint = new THREE.Vector3(18, 0.1, 18);
+    waypoints.push(firstPoint);
+    let prevPoint = firstPoint;
     let done = false;
-
     while (!done) {
-      const nextPoint = new THREE.Vector3(
-        prevPoint.x + Math.floor((Math.random() * 10)),
+      let nextPoint = new THREE.Vector3(
+        prevPoint.x + Math.floor((Math.random() * 4) - 2),
         0.1,
-        prevPoint.z + Math.floor((Math.random() * 20) - 10)
+        prevPoint.z + Math.floor((Math.random() * 8) - 2)
       );
-      if (nextPoint.z >= 18) {
-        nextPoint.z = 18;
+      if (nextPoint.z >= 15) {
+        nextPoint = secondPoint;
+        done = true;
       }
       if (nextPoint.z <= -18) {
         nextPoint.z = -18;
       }
       if (nextPoint.x >= 18) {
         nextPoint.x = 18;
+      }
+      if (nextPoint.x <= -18) {
+        nextPoint.x = -18;
+      }
+      waypoints.push(nextPoint);
+      prevPoint = nextPoint;
+    }
+    done = false;
+    while (!done) {
+      let nextPoint = new THREE.Vector3(
+        prevPoint.x + Math.floor((Math.random() * 8) - 2),
+        0.1,
+        prevPoint.z + Math.floor((Math.random() * 8) - 6)
+      );
+      if (nextPoint.z >= 18) {
+        nextPoint = 18;
+      }
+      if (nextPoint.z <= -15) {
+        if (nextPoint.x >= 15) {
+          nextPoint = thirdPoint;
+          done = true;
+        } else {
+          nextPoint.z = -15;
+        }
+      }
+      if (nextPoint.x >= 15) {
+        if (nextPoint.z <= -15) {
+          nextPoint = thirdPoint;
+          done = true;
+        } else {
+          nextPoint.x = 15;
+        }
+      }
+      if (nextPoint.x <= -18) {
+        nextPoint.x = -18;
+      }
+      waypoints.push(nextPoint);
+      prevPoint = nextPoint;
+    }
+    done = false;
+    while (!done) {
+      let nextPoint = new THREE.Vector3(
+        prevPoint.x + Math.floor((Math.random() * 4) - 2),
+        0.1,
+        prevPoint.z + Math.floor((Math.random() * 8) - 2)
+      );
+      if (nextPoint.z >= 15) {
+        nextPoint = lastPoint
         done = true;
+      }
+      if (nextPoint.z <= -18) {
+        nextPoint.z = -18;
+      }
+      if (nextPoint.x >= 18) {
+        nextPoint.x = 18;
+      }
+      if (nextPoint.x <= -18) {
+        nextPoint.x = -18;
       }
       waypoints.push(nextPoint);
       prevPoint = nextPoint;
