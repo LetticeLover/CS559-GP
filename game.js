@@ -174,9 +174,17 @@ export class Game {
       if (pathIntersects.length > 0) {
         onPath = true;
       }
+      let onTower = false;
+      for (let i = 0; i < this.towers.length; i++) {
+        const protoTowerIntersects = this.raycaster.intersectObject(this.towers[i].protoTower);
+        const fancyTowerIntersects = this.raycaster.intersectObject(this.towers[i].fancyTower);
+        if (protoTowerIntersects.length > 0 || fancyTowerIntersects.length > 0) {
+          onTower = true;
+          break;
+        }
+      }
 
-
-      if (!onPath) {
+      if (!onPath && !onTower) {
         let cost;
         switch (this.selectedTowerType) {
           case Towers.Types.BASIC:
@@ -238,8 +246,17 @@ export class Game {
       if (pathIntersects.length > 0) {
         onPath = true;
       }
+      let onTower = false;
+      for (let i = 0; i < this.towers.length; i++) {
+        const protoTowerIntersects = this.raycaster.intersectObject(this.towers[i].protoTower);
+        const fancyTowerIntersects = this.raycaster.intersectObject(this.towers[i].fancyTower);
+        if (protoTowerIntersects.length > 0 || fancyTowerIntersects.length > 0) {
+          onTower = true;
+          break;
+        }
+      }
 
-      if (!onPath) {
+      if (!onPath && !onTower) {
         let range;
         switch (this.selectedTowerType) {
           case Towers.Types.BASIC:
