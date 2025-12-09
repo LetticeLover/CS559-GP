@@ -46,7 +46,7 @@ export class Game {
   initScene() {
     this.scene = new THREE.Scene();
     this.camera = new THREE.OrthographicCamera(-25, 25, 25, -25, 0.1, 1000);
-    this.camera.position.set(10, 20, 25);
+    this.camera.position.set(0, 20, 0);
     this.camera.lookAt(0, 0, 0);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enablePan = false;
@@ -150,17 +150,12 @@ export class Game {
     if (intersects.length > 0) {
       const point = intersects[0].point;
 
+      const pathIntersects = this.raycaster.intersectObjects(this.pathSegments);
       let onPath = false;
-      for (let i = 0; i < this.waypoints.length - 1; i++) {
-        const start = this.waypoints[i];
-        const end = this.waypoints[i + 1];
-        const distance = new THREE.Vector3(point.x, 0.0, point.z)
-          .distanceTo(new THREE.Vector3((start.x + end.x) / 2, 0.0, (start.z + end.z) / 2));
-        if (distance < 2) {
-          onPath = true;
-          break;
-        }
+      if (pathIntersects.length > 0) {
+        onPath = true;
       }
+
 
       if (!onPath) {
         let cost;
@@ -206,17 +201,12 @@ export class Game {
     if (intersects.length > 0) {
       const point = intersects[0].point;
 
+      const pathIntersects = this.raycaster.intersectObjects(this.pathSegments);
       let onPath = false;
-      for (let i = 0; i < this.waypoints.length - 1; i++) {
-        const start = this.waypoints[i];
-        const end = this.waypoints[i + 1];
-        const distance = new THREE.Vector3(point.x, 0.0, point.z)
-          .distanceTo(new THREE.Vector3((start.x + end.x) / 2, 0.0, (start.z + end.z) / 2));
-        if (distance < 2) {
-          onPath = true;
-          break;
-        }
+      if (pathIntersects.length > 0) {
+        onPath = true;
       }
+
       if (!onPath) {
         let range;
         switch (this.selectedTowerType) {
