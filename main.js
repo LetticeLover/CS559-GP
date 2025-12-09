@@ -147,6 +147,10 @@ menuButton.addEventListener('click', () => { goToMenu(); });
 gameOverMenuButton.addEventListener('click', () => { goToMenu(); });
 restartButton.addEventListener('click', () => {
   game = null;
+  towerButtons.forEach((button) => {
+    button.classList.remove('highlighted');
+  });
+  lastClickedButton = null;
   startGame();
 });
 
