@@ -85,7 +85,7 @@ export class Goblin extends Enemy {
   }
   constructor(waypoints, wave, game) {
     super(waypoints, game);
-    this.maxHealth = Goblin.Stats.maxHealth * wave/2;
+    this.maxHealth = Goblin.Stats.maxHealth * Math.exp(wave/30);
     this.speed = Goblin.Stats.baseSpeed * Math.exp(wave/10);
     this.damage = Goblin.Stats.damage;
     this.score = Goblin.Stats.score;
@@ -139,7 +139,7 @@ export class Ogre extends Enemy {
   }
   constructor(waypoints, wave, game) {
     super(waypoints, game);
-    this.maxHealth = Ogre.Stats.maxHealth * wave/2;
+    this.maxHealth = Ogre.Stats.maxHealth * Math.exp(wave/20);
     this.speed = Ogre.Stats.baseSpeed * Math.exp(wave/15);
     this.damage = Ogre.Stats.damage;
     this.score = Ogre.Stats.score;
