@@ -1,0 +1,148 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+#canvas-container {
+  width: 100vw;
+  height: 100vh;
+}
+
+#menu-screen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.95);
+  color: white;
+  padding: 40px 60px;
+  border-radius: 15px;
+  text-align: center;
+  min-width: 400px;
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
+#menu-screen h1 {
+  font-size: 48px;
+  margin: 0 0 10px 0;
+  color: #4CAF50;
+}
+#menu-screen h2 {
+  font-size: 24px;
+  margin: 30px 0 20px 0;
+  color: #2196F3;
+}
+#menu-group-id {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+#settings {
+  margin: 20px 0;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 0;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+}
+
+.setting-item label {
+  font-size: 18px;
+  margin-right: 20px;
+}
+
+.setting-item input,
+.setting-item select {
+  padding: 8px 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  background: white;
+  color: black;
+  min-width: 120px;
+}
+
+.setting-item input[type="number"] {
+  text-align: center;
+}
+
+#start-button {
+  margin-top: 30px;
+  padding: 15px 40px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#ui-overlay {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: white;
+  font-size: 18px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 15px;
+  border-radius: 8px;
+}
+
+#controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#tower-selection {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
+}
+
+#game-over-screen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 40px 60px;
+  border-radius: 15px;
+  text-align: center;
+  font-size: 24px;
+  display: none;
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
+#game-over-screen h1 {
+  font-size: 48px;
+  margin: 0 0 10px 0;
+  color: #880808;
+}
+#game-over-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.highlighted {
+  background-color: #007bff;
+  color: white;
+  border: 2px solid #0056b3;
+}

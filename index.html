@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower Defense - Group 1467</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.ico">
+  </head>
+  <body>
+    <div id="canvas-container" style="display: none;"></div>
+
+    <!-- Menu Screen -->
+    <div id="menu-screen">
+      <h1>Tower Defense</h1>
+      <div id="menu-group-id">Group ID: 1467</div>
+
+      <div id="settings">
+        <h2>Game Settings</h2>
+
+        <div class="setting-item">
+          <label for="starting-lives">Starting Lives:</label>
+          <input type="number" id="starting-lives" min="1" max="100" value="20">
+        </div>
+
+        <div class="setting-item">
+          <label for="starting-currency">Starting Currency:</label>
+          <input type="number" id="starting-currency" min="50" max="500" value="150">
+        </div>
+
+        <div class="setting-item">
+          <label for="difficulty">Difficulty:</label>
+          <select id="difficulty">
+            <option value="easy">Easy</option>
+            <option value="normal" selected>Normal</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="start-button">Start Game</button>
+    </div>
+
+    <!-- UI Overlay -->
+    <div id="ui-overlay" style="display: none;">
+      <div id="ui-group-id">Group ID: 1467</div>
+      <div>Lives: <span id="ui-lives"></span></div>
+      <div>Currency: $<span id="ui-currency"></span></div>
+      <div>Wave: <span id="ui-wave"></span></div>
+      <div>Score: <span id="ui-score"></span></div>
+    </div>
+
+    <!-- Controls -->
+    <div id="controls" style="display: none;">
+      <button id="mode-button">Mode: </button>
+      <button id="pause-button">Pause</button>
+      <button id="menu-button">Menu</button>
+    </div>
+
+    <div id="tower-selection" style="display: none;">
+      <button id="basic-tower-button" data-tower="basic">Basic Tower (cost)</button>
+      <button id="ranger-tower-button" data-tower="ranger">Ranger Tower (cost)</button>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="game-over-screen" style="display: none;">
+      <h1>Game Over!</h1>
+      <div style="font-size: 18px; margin-top: 10px;">
+        Final Score: <span id="final-score">0</span>
+      </div>
+      <div style="font-size: 18px;">
+        Waves Completed: <span id="waves-completed">0</span>
+      </div>
+      <div id="game-over-buttons" style="margin-top: 20px;">
+        <div><button id="restart-button">Restart</button></div>
+        <div><button id="game-over-menu-button">Menu</button></div>
+      </div>
+    </div>
+
+    <script type="importmap"> {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@v0.181.2/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.181.2/examples/jsm/"
+      }
+    } </script>
+    <script src="main.js" type="module"></script>
+  </body>
+</html>
