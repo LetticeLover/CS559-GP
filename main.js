@@ -30,6 +30,9 @@ const menuButton = document.getElementById('menu-button');
 const gameOverMenuButton = document.getElementById('game-over-menu-button');
 const restartButton = document.getElementById('restart-button');
 const continueButton = document.getElementById('continue-button');
+const continueToggleButton = document.getElementById('continue-toggle-button');
+const twoXButton = document.getElementById('2x-button');
+const fourXButton = document.getElementById('4x-button');
 
 const basicTowerButton = document.getElementById('basic-tower-button');
 const rangerTowerButton = document.getElementById('ranger-tower-button');
@@ -100,7 +103,13 @@ function animate() {
   if (game === null) {
     return;
   }
-  const delta = game.clock.getDelta();
+  let delta = game.clock.getDelta();
+  if (twoXButton.classList.contains('highlighted')) {
+    delta *= 2;
+  }
+  if (fourXButton.classList.contains('highlighted')) {
+    delta *= 4;
+  }
   game.step(delta);
   renderer.render(game.scene, game.camera);
   updateUI();
@@ -150,6 +159,9 @@ restartButton.addEventListener('click', () => {
   towerButtons.forEach((button) => {
     button.classList.remove('highlighted');
   });
+  continueToggleButton.classList.remove('highlighted');
+  twoXButton.classList.remove('highlighted');
+  fourXButton.classList.remove('highlighted');
   lastClickedButton = null;
   startGame();
 });
@@ -158,6 +170,19 @@ continueButton.addEventListener('click', () => {
   game.state.continuePaused = false;
   pauseButton.disabled = false;
   continueScreen.style.display = 'none';
+});
+
+continueToggleButton.addEventListener('click', () => {
+  continueToggleButton.classList.toggle('highlighted');
+});
+
+twoXButton.addEventListener('click', () => {
+  twoXButton.classList.toggle('highlighted');
+  fourXButton.classList.remove('highlighted');
+});
+fourXButton.addEventListener('click', () => {
+  fourXButton.classList.toggle('highlighted');
+  twoXButton.classList.remove('highlighted');
 });
 
 

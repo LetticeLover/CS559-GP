@@ -466,9 +466,11 @@ export class Game {
         this.state.wave++;
         this.score += 100;
         this.state.currency += 50;
-        this.state.continuePaused = true;
-        document.getElementById('pause-button').disabled = true;
-        document.getElementById('continue-screen').style.display = 'block';
+        if (!document.getElementById('continue-toggle-button').classList.contains('highlighted')) {
+          this.state.continuePaused = true;
+          document.getElementById('pause-button').disabled = true;
+          document.getElementById('continue-screen').style.display = 'block';
+        }
       }
     }
   }
