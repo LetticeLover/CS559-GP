@@ -76,7 +76,7 @@ export class Game {
       let nextPoint = new THREE.Vector3(
         prevPoint.x + Math.floor((Math.random() * 4) - 2),
         0.1,
-        prevPoint.z + Math.floor((Math.random() * 8) - 2)
+        prevPoint.z + Math.floor((Math.random() * 4) + 1)
       );
       if (nextPoint.z >= 15) {
         nextPoint = secondPoint;
@@ -131,7 +131,7 @@ export class Game {
       let nextPoint = new THREE.Vector3(
         prevPoint.x + Math.floor((Math.random() * 4) - 2),
         0.1,
-        prevPoint.z + Math.floor((Math.random() * 8) - 2)
+        prevPoint.z + Math.floor((Math.random() * 8) + 1)
       );
       if (nextPoint.z >= 15) {
         nextPoint = lastPoint
@@ -164,7 +164,6 @@ export class Game {
       MIDDLE: THREE.MOUSE.DOLLY,
       RIGHT: THREE.MOUSE.ROTATE
     }
-    
 
     this.scene.background = new THREE.Color(this.renderMode === 'prototype' ? 0x87ceeb : 0x1a1a2e);
     this.scene.add(new THREE.AmbientLight(0xffffff, 0.6));
@@ -182,11 +181,15 @@ export class Game {
     this.scene.add(this.ground);
 
     this.pathSegments = [];
+    this.connectorSegments = [];
     const pathMaterial = this.renderMode === 'prototype' ? Game.pathMats.prototype : Game.pathMats.fancy;
     for (let i = 0; i < this.waypoints.length - 1; i++) {
       const start = this.waypoints[i];
       const end = this.waypoints[i + 1];
       const distance = start.distanceTo(end);
+      const connectorGeometry = new THREE.CylinderGeometry(1, 1, 0.2, 32, 1);
+      const connectorSegment = new THREE.Mesh(connectorGeometry, pathMaterial);
+      connectorSegment.position.copy(start);
       const pathGeometry = new THREE.BoxGeometry(distance, 0.2, 2);
       const pathSegment = new THREE.Mesh(pathGeometry, pathMaterial);
 
@@ -195,7 +198,9 @@ export class Game {
       const angle = Math.atan2(end.z - start.z, -(end.x - start.x));
       pathSegment.rotation.y = angle;
       this.scene.add(pathSegment);
+      this.scene.add(connectorSegment);
       this.pathSegments.push(pathSegment);
+      this.connectorSegments.push(connectorSegment);
     }
 
     const startGeometry = new THREE.CylinderGeometry(1.5, 1.5, 0.5, 32);
@@ -218,6 +223,9 @@ export class Game {
       this.pathSegments.forEach(segment => {
         segment.material = Game.pathMats.prototype;
       });
+      this.connectorSegments.forEach(segment => {
+        segment.material = Game.pathMats.prototype;
+      });
       this.towers.forEach(tower => {
         this.scene.remove(tower.fancyTower);
         this.scene.add(tower.protoTower);
@@ -230,6 +238,9 @@ export class Game {
       this.renderMode = 'fancy';
       this.ground.material = Game.groundMats.fancy;
       this.pathSegments.forEach(segment => {
+        segment.material = Game.pathMats.fancy;
+      });
+      this.connectorSegments.forEach(segment => {
         segment.material = Game.pathMats.fancy;
       });
       this.towers.forEach(tower => {
@@ -260,8 +271,9 @@ export class Game {
       const point = intersects[0].point;
 
       const pathIntersects = this.raycaster.intersectObjects(this.pathSegments);
+      const connectorIntersects = this.raycaster.intersectObjects(this.connectorSegments);
       let onPath = false;
-      if (pathIntersects.length > 0) {
+      if (pathIntersects.length > 0 || connectorIntersects.length > 0) {
         onPath = true;
       }
       let onTower = false;
