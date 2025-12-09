@@ -65,14 +65,14 @@ export class Game {
 
   generateWaypoints() {
     let waypoints = [];
-    let prevPoint = new THREE.Vector3(-18, 0.5, (Math.random() * 40) - 20) 
+    let prevPoint = new THREE.Vector3(-18, 0.1, (Math.random() * 40) - 20) 
     waypoints.push(prevPoint);
     let done = false;
 
     while (!done) {
       const nextPoint = new THREE.Vector3(
         prevPoint.x + Math.floor((Math.random() * 10)),
-        0.5,
+        0.1,
         prevPoint.z + Math.floor((Math.random() * 20) - 10)
       );
       if (nextPoint.z >= 18) {

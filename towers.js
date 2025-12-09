@@ -186,6 +186,7 @@ export class Farm {
     this.protoTower.position.copy(this.position);
     this.fancyTower = SkeletonUtils.clone(barnModel);
     this.fancyTower.position.copy(this.position);
+    this.fancyTower.position.y -= 0.5;
     if (this.game.renderMode === 'fancy') {
       this.game.scene.add(this.fancyTower);
     } else {
