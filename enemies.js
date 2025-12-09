@@ -100,7 +100,7 @@ export class Goblin extends Enemy {
       this.damage *= 2;
       this.score *= 5;
     }
-    this.speed = Math.min(this.speed, 18);
+    this.speed = Math.min(this.speed, 16);
     this.health = this.maxHealth;
     this.material = new THREE.MeshStandardMaterial({ color: 0x0fa92f });
     this.createMesh();
