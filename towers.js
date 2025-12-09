@@ -53,10 +53,10 @@ export class Basic extends Tower {
   }
   static Stats = {
     cost: 50,
-    shootInterval: 0.25,
+    shootInterval: 0.2,
     damage: 15,
     range: 5,
-    projectileSpeed: 12,
+    projectileSpeed: 20,
   }
   constructor(position, game) {
     super(position, game);
@@ -103,8 +103,8 @@ export class Ranger extends Tower {
     cost: 75,
     shootInterval: 1,
     damage: 25,
-    range: 8,
-    projectileSpeed: 15,
+    range: 12,
+    projectileSpeed: 25,
   }
   constructor(position, game) {
     super(position, game);

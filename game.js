@@ -196,6 +196,50 @@ export class Game {
     }
   }
 
+  onMouseMove(mouse) {
+    const prevCirc = this.scene.getObjectByName('range circle');
+    if (prevCirc) {
+      this.scene.remove(prevCirc);
+    }
+    this.raycaster.setFromCamera(mouse, this.camera);
+    const intersects = this.raycaster.intersectObject(this.ground);
+    if (intersects.length > 0) {
+      const point = intersects[0].point;
+
+      let onPath = false;
+      for (let i = 0; i < this.waypoints.length - 1; i++) {
+        const start = this.waypoints[i];
+        const end = this.waypoints[i + 1];
+        const distance = new THREE.Vector3(point.x, 0.0, point.z)
+          .distanceTo(new THREE.Vector3((start.x + end.x) / 2, 0.0, (start.z + end.z) / 2));
+        if (distance < 2) {
+          onPath = true;
+          break;
+        }
+      }
+      if (!onPath) {
+        let range;
+        switch (this.selectedTowerType) {
+          case Towers.Types.BASIC:
+            range = Towers.Basic.Stats.range;
+            break;
+          case Towers.Types.RANGER:
+            range = Towers.Ranger.Stats.range;
+            break;
+        }
+        const geometry = new THREE.CircleGeometry(range);
+        const material = new THREE.MeshStandardMaterial({ color: 0xadd836, transparent: true, opacity: 0.4 });
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.copy(point);
+        mesh.position.y += 0.25;
+        mesh.rotation.x = -Math.PI/2;
+        mesh.name = 'range circle'
+        this.scene.add(mesh);
+      }
+    }
+
+  }
+
   spawnEnemy() {
     let enemy;
     if (Math.random() > 0.75) {

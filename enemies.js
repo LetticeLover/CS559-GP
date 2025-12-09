@@ -37,13 +37,13 @@ export class Goblin extends Enemy {
   static Stats = {
     maxHealth: 50,
     damage: 1,
-    baseSpeed: 5,
+    baseSpeed: 2.5,
     score: 5,
   }
   constructor(waypoints, wave, game) {
     super(waypoints, game);
     this.maxHealth = Goblin.Stats.maxHealth * wave/2;
-    this.speed = Goblin.Stats.baseSpeed * Math.exp(wave/7);
+    this.speed = Goblin.Stats.baseSpeed * Math.exp(wave/10);
     this.damage = Goblin.Stats.damage;
     this.score = Goblin.Stats.score;
     if (game.state.difficulty === 'easy') {
@@ -58,6 +58,7 @@ export class Goblin extends Enemy {
       this.damage *= 2;
       this.score *= 5;
     }
+    this.speed = Math.min(this.speed, 18);
     this.health = this.maxHealth;
     this.material = new THREE.MeshStandardMaterial({ color: 0x0fa92f });
     this.createMesh();
@@ -94,13 +95,13 @@ export class Ogre extends Enemy {
   static Stats = {
     maxHealth: 200,
     damage: 5,
-    baseSpeed: 2,
+    baseSpeed: 1,
     score: 15,
   }
   constructor(waypoints, wave, game) {
     super(waypoints, game);
     this.maxHealth = Ogre.Stats.maxHealth * wave/2;
-    this.speed = Ogre.Stats.baseSpeed * Math.exp(wave/10);
+    this.speed = Ogre.Stats.baseSpeed * Math.exp(wave/15);
     this.damage = Ogre.Stats.damage;
     this.score = Ogre.Stats.score;
     if (game.state.difficulty === 'easy') {
@@ -114,6 +115,7 @@ export class Ogre extends Enemy {
       this.damage *= 2;
       this.score *= 5;
     }
+    this.speed = Math.min(this.speed, 12);
     this.health = this.maxHealth;
     this.material = new THREE.MeshStandardMaterial({ color: 0x5a9c39 });
     this.createMesh();

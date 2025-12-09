@@ -164,6 +164,14 @@ function onMouseClick(event) {
   game.onMouseClick(mouse);
 }
 
+const mouseMove = new THREE.Vector2();
+window.addEventListener('mousemove', (event) => {
+  if (game === null || game.state.gameOver || game.state.paused) return;
+  mouseMove.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouseMove.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  game.onMouseMove(mouseMove);
+});
+
 window.addEventListener('resize', () => {
   if (game === null) {
     return;
