@@ -20,7 +20,7 @@ You can pan about the world with a left click and drag. You can rotate the world
 ## Miscellaneous Buttons
 There is a mode button in the top right that changes the graphics mode of the game. There is also a pause button which pauses the game entirely. Finally, there is a menu button which will quit your game and return you to the menu.
 
-When you finish a wave, a button will pop up in the top part of your screen that you can click to begin the next wave.
+When you finish a wave, the game will pause and a button will pop up in the top part of your screen that you can click to begin the next wave. You can toggle the "Auto-Continue" button to not have the game pause after each wave. The 2x and 4x buttons increase the speed of the game by their respective values.
 
 When you inevitably game over, you can choose to either restart right away with the same settings or go back to the menu to change some settings.
 
