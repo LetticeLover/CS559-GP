@@ -60,6 +60,7 @@ class Enemy {
     this.protoMesh.rotation.y = angle;
     if (this.fancyMesh) {
       this.fancyMesh.position.copy(this.position);
+      this.fancyMesh.position.y = 0.2;
       this.fancyMesh.rotation.y = angle;
     }
     if (this.position.distanceTo(target) < 0.25) {
@@ -112,6 +113,7 @@ export class Goblin extends Enemy {
     this.protoMesh.position.copy(this.position);
     this.fancyMesh = SkeletonUtils.clone(goblinModel);
     this.fancyMesh.position.copy(this.position);
+    this.fancyMesh.position.y = 0.2
     if (this.game.renderMode === 'fancy') {
       this.game.scene.add(this.fancyMesh);
     } else {
@@ -166,6 +168,7 @@ export class Ogre extends Enemy {
     this.protoMesh.position.copy(this.position);
     this.fancyMesh = SkeletonUtils.clone(ogreModel);
     this.fancyMesh.position.copy(this.position);
+    this.fancyMesh.position.y = 0.2;
     if (this.game.renderMode === 'fancy') {
       this.game.scene.add(this.fancyMesh);
     } else {

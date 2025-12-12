@@ -217,6 +217,7 @@ export class Game {
   }
 
   swapRenderMode() {
+    this.state.paused = true;
     if (this.renderMode === 'fancy') {
       this.renderMode = 'prototype';
       this.ground.material = Game.groundMats.prototype;
@@ -252,6 +253,7 @@ export class Game {
         this.scene.add(enemy.fancyMesh);
       });
     }
+    this.state.paused = false;
   }
 
   initGame() {
