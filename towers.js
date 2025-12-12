@@ -121,7 +121,7 @@ export class Ranger extends Tower {
   static Stats = {
     cost: 75,
     shootInterval: 1,
-    damage: 25,
+    damage: 100,
     range: 10,
     projectileSpeed: 25,
   }
