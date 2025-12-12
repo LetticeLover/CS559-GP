@@ -87,6 +87,7 @@ function startGame() {
 
   menuScreen.style.display = 'none';
   gameOverScreen.style.display = 'none';
+  continueScreen.style.display = 'none';
   canvasContainer.style.display = 'block';
   uiOverlay.style.display = 'block';
   controls.style.display = 'flex';
@@ -187,8 +188,10 @@ fourXButton.addEventListener('click', () => {
 
 
 function goToMenu() {
+  game.state.paused = true;
   if (!game.state.gameOver) {
     if (!confirm('Return to menu? Your progress will be lost.')) {
+      game.state.paused = false;
       return;
     }
   }
@@ -197,6 +200,7 @@ function goToMenu() {
   towerSelection.style.display = 'none';
   gameOverScreen.style.display = 'none';
   canvasContainer.style.display = 'none';
+  continueScreen.style.display = 'none';
   menuScreen.style.display = 'block';
 
   game = null;
